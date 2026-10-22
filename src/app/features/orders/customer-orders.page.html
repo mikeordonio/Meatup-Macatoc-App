@@ -1,0 +1,66 @@
+<ion-header><ion-toolbar><ion-title>Orders and cart</ion-title></ion-toolbar></ion-header>
+
+<ion-content class="orders-content">
+  <section class="order-card">
+    <h1>Your cart</h1>
+    @for (item of cart; track item.product.id) {
+      <ion-item>
+        <ion-label>
+          <h2>{{ item.product.name }}</h2>
+          <p>{{ item.product.shopName }} · ₱{{ item.product.pricePerKilogram | number:'1.2-2' }}/kg</p>
+        </ion-label>
+        <ion-select [value]="item.quantityKg" (ionChange)="updateQuantity(item, $event.detail.value)">
+          @for (quantity of [0.25, 0.5, 0.75, 1]; track quantity) {
+            @if (quantity <= item.product.availableQuantityKg) {
+              <ion-select-option [value]="quantity">{{ quantity | number:'1.2-2' }} kg</ion-select-option>
+            }
+          }
+        </ion-select>
+        <ion-button fill="clear" color="danger" (click)="remove(item)">Remove</ion-button>
+      </ion-item>
+    } @empty { <p>Your cart is empty.</p> }
+    <p><strong>Total:</strong> ₱{{ cartTotal | number:'1.2-2' }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="checkout()">
+      <ion-item>
+        <ion-select label="Fulfillment" labelPlacement="stacked" formControlName="fulfillmentMethod">
+          <ion-select-option value="pickup">Pickup</ion-select-option>
+          <ion-select-option value="delivery">Delivery</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item><ion-textarea label="Pickup or delivery details" labelPlacement="stacked" formControlName="fulfillmentDetails"></ion-textarea></ion-item>
+      @if (errorMessage) { <p class="error">{{ errorMessage }}</p> }
+      @if (successMessage) { <p class="success">{{ successMessage }}</p> }
+      <ion-button expand="block" type="submit" [disabled]="isSubmitting || !cart.length">
+        {{ isSubmitting ? 'Submitting...' : 'Submit order' }}
+      </ion-button>
+    </form>
+  </section>
+
+  <section class="order-card">
+    <h1>Order history</h1>
+    @for (order of orders; track order.id) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ order.shopName }}</ion-card-title>
+          <ion-card-subtitle>{{ order.status | titlecase }} · {{ order.createdAt | date:'medium' }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ order.items.length }} item(s) · ₱{{ order.total | number:'1.2-2' }}</p>
+          @if (order.status === 'pending') {
+            <ion-button size="small" color="danger" fill="outline" (click)="cancel(order)">Cancel order</ion-button>
+          }
+          <ion-button size="small" fill="outline" (click)="openConversation(order)">
+            Message shop
+            @if (unreadCounts[order.id]) {
+              <ion-badge color="danger">{{ unreadCounts[order.id] }}</ion-badge>
+            }
+          </ion-button>
+          @if (selectedOrder?.id === order.id) {
+            <app-order-conversation [order]="order"></app-order-conversation>
+          }
+        </ion-card-content>
+      </ion-card>
+    } @empty { <p>No orders yet.</p> }
+  </section>
+</ion-content>

@@ -1,0 +1,19 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "conversations": {
+      "$orderId": {
+        ".read": "auth != null && (data.child('customerId').val() == auth.uid || data.child('shopOwnerId').val() == auth.uid)",
+        ".write": "auth != null && ((!data.exists() && (newData.child('customerId').val() == auth.uid || newData.child('shopOwnerId').val() == auth.uid)) || data.child('customerId').val() == auth.uid || data.child('shopOwnerId').val() == auth.uid)",
+        "$messageId": {
+          ".validate": "newData.hasChildren(['senderId', 'senderName', 'content', 'createdAt'])",
+          ".write": "auth != null && (data.parent().parent().child('customerId').val() == auth.uid || data.parent().parent().child('shopOwnerId').val() == auth.uid) && newData.child('senderId').val() == auth.uid"
+        },
+        "readAt": {
+          ".write": "auth != null && (data.parent().child('customerId').val() == auth.uid || data.parent().child('shopOwnerId').val() == auth.uid)"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+.shop-content {
+  --background: var(--ion-color-light);
+}
+
+.shop-list {
+  max-width: 760px;
+  margin: 24px auto;
+}
+
+.shop-list ion-card {
+  margin: 16px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.message.error {
+  margin: 24px;
+  color: var(--ion-color-danger);
+}

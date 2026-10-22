@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ page.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="feature-content">
+  <section class="feature-card">
+    <ion-icon [name]="page.icon" aria-hidden="true"></ion-icon>
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.description }}</p>
+
+    @if (profile$ | async; as profile) {
+      <ion-chip color="primary">
+        <ion-label>{{ profile.name }} · {{ profile.role }}</ion-label>
+      </ion-chip>
+    }
+
+    <p class="feature-note">This role-specific area is ready for the next feature phase.</p>
+  </section>
+</ion-content>

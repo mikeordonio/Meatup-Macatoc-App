@@ -1,0 +1,24 @@
+<ion-content class="auth-content">
+  <div class="auth-container">
+    <form class="auth-card" [formGroup]="form" (ngSubmit)="submit()">
+      <h1>Welcome to MeatUp Macatoc</h1>
+      <p>Sign in to continue.</p>
+
+      <ion-item>
+        <ion-input label="Email" labelPlacement="stacked" type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Password" labelPlacement="stacked" type="password" formControlName="password"></ion-input>
+      </ion-item>
+
+      @if (errorMessage) {
+        <p class="auth-error">{{ errorMessage }}</p>
+      }
+      <ion-button expand="block" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+      </ion-button>
+      <a class="auth-link" routerLink="/auth/reset-password">Forgot your password?</a>
+      <a class="auth-link" routerLink="/auth/register">Create a customer account</a>
+    </form>
+  </div>
+</ion-content>

@@ -1,0 +1,35 @@
+.conversation {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.messages {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+}
+
+.message {
+  width: fit-content;
+  max-width: 85%;
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: var(--ion-background-color);
+  border-radius: 10px;
+}
+
+.message.mine {
+  margin-left: auto;
+  background: var(--ion-color-primary-tint);
+}
+
+.message p {
+  margin: 4px 0;
+}
+
+.error {
+  color: var(--ion-color-danger);
+}

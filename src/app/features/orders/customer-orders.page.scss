@@ -1,0 +1,5 @@
+.orders-content { --background: var(--ion-color-light); }
+.order-card { max-width: 720px; margin: 24px auto; padding: 24px; background: var(--ion-background-color); border-radius: 16px; }
+.order-card ion-card { margin: 16px 0; }
+.error { color: var(--ion-color-danger); }
+.success { color: var(--ion-color-success); }

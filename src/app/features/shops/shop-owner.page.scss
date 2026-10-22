@@ -1,0 +1,19 @@
+.shop-content {
+  --background: var(--ion-color-light);
+}
+
+.shop-form,
+.shop-list {
+  max-width: 680px;
+  margin: 24px auto;
+  padding: 24px;
+  background: var(--ion-background-color);
+  border-radius: 16px;
+}
+
+.shop-form ion-item {
+  margin-bottom: 8px;
+}
+
+.message.error { color: var(--ion-color-danger); }
+.message.success { color: var(--ion-color-success); }

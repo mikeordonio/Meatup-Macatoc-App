@@ -1,0 +1,40 @@
+.shop-content {
+  --background: var(--ion-color-light);
+}
+
+.shop-list {
+  max-width: 680px;
+  margin: 24px auto;
+}
+
+.catalog-controls {
+  max-width: 680px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.product-list {
+  max-width: 680px;
+  margin: 24px auto;
+}
+
+.product-list ion-card,
+.shop-list ion-card {
+  margin: 16px;
+}
+
+.shop-list ion-card {
+  margin: 16px;
+}
+
+.shop-list img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+}
+
+.message.error {
+  margin: 24px;
+  color: var(--ion-color-danger);
+}

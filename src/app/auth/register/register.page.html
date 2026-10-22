@@ -1,0 +1,29 @@
+<ion-content class="auth-content">
+  <div class="auth-container">
+    <form class="auth-card" [formGroup]="form" (ngSubmit)="submit()">
+      <h1>Create your account</h1>
+      <p>Customer registration is open. Shop-owner applications will be added in a later phase.</p>
+
+      <ion-item>
+        <ion-input label="Full name" labelPlacement="stacked" type="text" formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Email" labelPlacement="stacked" type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Password" labelPlacement="stacked" type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Confirm password" labelPlacement="stacked" type="password" formControlName="confirmPassword"></ion-input>
+      </ion-item>
+
+      @if (errorMessage) {
+        <p class="auth-error">{{ errorMessage }}</p>
+      }
+      <ion-button expand="block" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+      </ion-button>
+      <a class="auth-link" routerLink="/auth/login">Already have an account? Sign in</a>
+    </form>
+  </div>
+</ion-content>

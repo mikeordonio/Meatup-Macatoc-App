@@ -1,0 +1,38 @@
+.auth-content {
+  --background: var(--ion-color-light);
+}
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(100%, 440px);
+  padding: 24px;
+  background: var(--ion-background-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
+}
+
+.auth-card h1 {
+  margin-top: 0;
+}
+
+.auth-card ion-button {
+  margin-top: 16px;
+}
+
+.auth-error {
+  color: var(--ion-color-danger);
+  margin: 12px 0 0;
+}
+
+.auth-link {
+  display: block;
+  margin-top: 16px;
+  text-align: center;
+}

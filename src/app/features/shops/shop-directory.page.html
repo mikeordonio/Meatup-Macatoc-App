@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Approved shops</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="shop-content">
+  @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+  <section class="catalog-controls">
+    <ion-searchbar [(ngModel)]="searchTerm" placeholder="Search products or shops"></ion-searchbar>
+    <ion-segment [(ngModel)]="selectedCategory">
+      <ion-segment-button value="all"><ion-label>All</ion-label></ion-segment-button>
+      <ion-segment-button value="pork"><ion-label>Pork</ion-label></ion-segment-button>
+      <ion-segment-button value="chicken"><ion-label>Chicken</ion-label></ion-segment-button>
+    </ion-segment>
+  </section>
+
+  <section class="product-list">
+    <h2>Available products</h2>
+    @for (product of filteredProducts; track product.id) {
+      <ion-card>
+        @if (product.imageBase64) { <img [src]="product.imageBase64" [alt]="product.name"> }
+        <ion-card-header>
+          <ion-card-title>{{ product.name }}</ion-card-title>
+          <ion-card-subtitle>{{ product.shopName }} · {{ product.category | titlecase }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ product.description }}</p>
+          <p><strong>Price:</strong> ₱{{ product.pricePerKilogram | number:'1.2-2' }}/kg</p>
+          <p><strong>Available:</strong> {{ product.availableQuantityKg | number:'1.2-2' }} kg</p>
+          <ion-item>
+            <ion-select label="Quantity" labelPlacement="stacked" [(ngModel)]="selectedQuantities[product.id]">
+              @for (quantity of [0.25, 0.5, 0.75, 1]; track quantity) {
+                @if (quantity <= product.availableQuantityKg) {
+                  <ion-select-option [value]="quantity">{{ quantity | number:'1.2-2' }} kg</ion-select-option>
+                }
+              }
+            </ion-select>
+          </ion-item>
+          <ion-button size="small" (click)="addToCart(product)">Add to cart</ion-button>
+        </ion-card-content>
+      </ion-card>
+    } @empty { <p>No products match your search.</p> }
+  </section>
+
+  <section class="shop-list">
+    <h2>Approved shops</h2>
+    @for (shop of shops; track shop.id) {
+      <ion-card>
+        @if (shop.imageUrl) { <img [src]="shop.imageUrl" [alt]="shop.name"> }
+        <ion-card-header>
+          <ion-card-title>{{ shop.name }}</ion-card-title>
+          <ion-card-subtitle>{{ shop.serviceArea }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ shop.description }}</p>
+          <p><strong>Address:</strong> {{ shop.address }}</p>
+          <p><strong>Contact:</strong> {{ shop.contactNumber }}</p>
+        </ion-card-content>
+      </ion-card>
+    } @empty { <p>No approved shops are available yet.</p> }
+  </section>
+</ion-content>

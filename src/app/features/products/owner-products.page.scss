@@ -1,0 +1,6 @@
+.product-content { --background: var(--ion-color-light); }
+.product-form, .product-list { max-width: 720px; margin: 24px auto; padding: 24px; background: var(--ion-background-color); border-radius: 16px; }
+.product-form ion-item { margin-bottom: 8px; }
+.product-list ion-card { margin: 16px 0; }
+.message.error { color: var(--ion-color-danger); }
+.message.success { color: var(--ion-color-success); }

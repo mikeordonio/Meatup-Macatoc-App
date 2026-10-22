@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar><ion-title>Products</ion-title></ion-toolbar>
+</ion-header>
+
+<ion-content class="product-content">
+  <form class="product-form" [formGroup]="form" (ngSubmit)="submit()">
+    <h1>{{ editingProductId ? 'Edit product' : 'Add product' }}</h1>
+    <ion-item>
+      <ion-select label="Shop" labelPlacement="stacked" formControlName="shopId">
+        @for (shop of shops; track shop.id) {
+          <ion-select-option [value]="shop.id">{{ shop.name }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+    <ion-item><ion-input label="Product name" labelPlacement="stacked" formControlName="name"></ion-input></ion-item>
+    <ion-item>
+      <ion-select label="Category" labelPlacement="stacked" formControlName="category">
+        <ion-select-option value="pork">Pork</ion-select-option>
+        <ion-select-option value="chicken">Chicken</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item><ion-textarea label="Description" labelPlacement="stacked" formControlName="description"></ion-textarea></ion-item>
+    <ion-item><ion-input label="Price per kilogram" labelPlacement="stacked" type="number" min="0.01" step="0.01" formControlName="pricePerKilogram"></ion-input></ion-item>
+    <ion-item><ion-input label="Available quantity (kg)" labelPlacement="stacked" type="number" min="0" step="0.25" formControlName="availableQuantityKg"></ion-input></ion-item>
+    <ion-item>
+      <ion-label position="stacked">Product image (Base64 in Firestore, max 700 KB)</ion-label>
+      <input type="file" accept="image/*" (change)="selectImage($event)">
+    </ion-item>
+    <ion-item><ion-checkbox slot="start" formControlName="isAvailable"></ion-checkbox><ion-label>Available for customers</ion-label></ion-item>
+
+    @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+    @if (successMessage) { <p class="message success">{{ successMessage }}</p> }
+    <ion-button expand="block" type="submit" [disabled]="isSubmitting || shops.length === 0">
+      {{ isSubmitting ? 'Saving...' : (editingProductId ? 'Save changes' : 'Add product') }}
+    </ion-button>
+    @if (editingProductId) { <ion-button expand="block" fill="outline" type="button" (click)="cancelEdit()">Cancel</ion-button> }
+    @if (shops.length === 0) { <p>You need an approved shop before adding products.</p> }
+  </form>
+
+  <section class="product-list">
+    <h2>Your catalog</h2>
+    @for (product of products; track product.id) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ product.name }}</ion-card-title>
+          <ion-card-subtitle>{{ product.category | titlecase }} · {{ product.shopName }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>₱{{ product.pricePerKilogram | number:'1.2-2' }}/kg · {{ product.availableQuantityKg | number:'1.2-2' }} kg available</p>
+          @if (isLowStock(product)) { <ion-badge color="warning">Low stock</ion-badge> }
+          @if (!product.isAvailable) { <ion-badge color="medium">Unavailable</ion-badge> }
+          <ion-button size="small" fill="outline" (click)="editProduct(product)">Edit product</ion-button>
+        </ion-card-content>
+      </ion-card>
+    } @empty { <p>No products added yet.</p> }
+  </section>
+</ion-content>

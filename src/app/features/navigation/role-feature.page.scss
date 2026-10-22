@@ -1,0 +1,27 @@
+.feature-content {
+  --background: var(--ion-color-light);
+}
+
+.feature-card {
+  margin: 24px auto;
+  max-width: 560px;
+  padding: 32px 24px;
+  text-align: center;
+  background: var(--ion-background-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
+}
+
+.feature-card ion-icon {
+  font-size: 48px;
+  color: var(--ion-color-primary);
+}
+
+.feature-card h1 {
+  margin-bottom: 8px;
+}
+
+.feature-note {
+  margin-top: 24px;
+  color: var(--ion-color-medium);
+}

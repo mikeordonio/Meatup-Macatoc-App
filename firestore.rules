@@ -1,0 +1,91 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == userId
+        && request.resource.data.role == 'customer'
+        && request.resource.data.status == 'active';
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.status == resource.data.status;
+      allow delete: if isAdmin();
+    }
+
+    match /shops/{shopId} {
+      allow create: if signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'shopOwner'
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.ownerId == request.auth.uid)
+        || (signedIn() && resource.data.status == 'approved');
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.ownerId == request.auth.uid
+          && request.resource.data.ownerId == resource.data.ownerId
+          && request.resource.data.ownerName == resource.data.ownerName
+          && request.resource.data.status == resource.data.status
+          && request.resource.data.createdAt == resource.data.createdAt);
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow create: if signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'shopOwner'
+        && request.resource.data.ownerId == request.auth.uid
+        && get(/databases/$(database)/documents/shops/$(request.resource.data.shopId)).data.ownerId == request.auth.uid
+        && get(/databases/$(database)/documents/shops/$(request.resource.data.shopId)).data.status == 'approved';
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.ownerId == request.auth.uid)
+        || (signedIn()
+          && resource.data.isAvailable == true
+          && resource.data.availableQuantityKg > 0
+          && get(/databases/$(database)/documents/shops/$(resource.data.shopId)).data.status == 'approved');
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.ownerId == request.auth.uid
+          && request.resource.data.ownerId == resource.data.ownerId
+          && request.resource.data.shopId == resource.data.shopId
+          && get(/databases/$(database)/documents/shops/$(request.resource.data.shopId)).data.ownerId == request.auth.uid);
+      allow delete: if isAdmin() || (signedIn() && resource.data.ownerId == request.auth.uid);
+    }
+
+    match /orders/{orderId} {
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.customerId
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'customer'
+        && request.resource.data.status == 'pending';
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.customerId == request.auth.uid)
+        || (signedIn() && resource.data.shopOwnerId == request.auth.uid);
+      allow update: if signedIn()
+        && (
+          (resource.data.customerId == request.auth.uid
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'cancelled'
+            && request.resource.data.customerId == resource.data.customerId)
+          || (resource.data.shopOwnerId == request.auth.uid
+            && request.resource.data.customerId == resource.data.customerId
+            && request.resource.data.shopOwnerId == resource.data.shopOwnerId
+            && request.resource.data.shopId == resource.data.shopId)
+        );
+      allow delete: if isAdmin();
+    }
+  }
+}

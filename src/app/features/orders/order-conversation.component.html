@@ -1,0 +1,23 @@
+<section class="conversation">
+  <h3>Order conversation</h3>
+  <div class="messages">
+    @for (message of messages; track message.id) {
+      <div class="message" [class.mine]="message.senderId === currentUserId">
+        <strong>{{ message.senderName }}</strong>
+        <p>{{ message.content }}</p>
+        <small>{{ message.createdAt | date:'short' }}</small>
+      </div>
+    } @empty {
+      <p>No messages yet. Start the conversation.</p>
+    }
+  </div>
+  @if (errorMessage) { <p class="error">{{ errorMessage }}</p> }
+  <form [formGroup]="form" (ngSubmit)="send()">
+    <ion-item>
+      <ion-textarea label="Message" labelPlacement="stacked" maxlength="1000" formControlName="content"></ion-textarea>
+    </ion-item>
+    <ion-button size="small" type="submit" [disabled]="isSending">
+      {{ isSending ? 'Sending...' : 'Send message' }}
+    </ion-button>
+  </form>
+</section>

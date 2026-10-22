@@ -1,0 +1,42 @@
+<ion-header><ion-toolbar><ion-title>Incoming orders</ion-title></ion-toolbar></ion-header>
+<ion-content class="orders-content">
+  <section class="order-card">
+    @if (errorMessage) { <p class="error">{{ errorMessage }}</p> }
+    @for (order of orders; track order.id) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ order.customerName }} · ₱{{ order.total | number:'1.2-2' }}</ion-card-title>
+          <ion-card-subtitle>{{ order.status | titlecase }} · {{ order.fulfillmentMethod | titlecase }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ order.fulfillmentDetails }}</p>
+          @for (item of order.items; track item.productId) {
+            <p>{{ item.name }} · {{ item.quantityKg | number:'1.2-2' }} kg</p>
+          }
+          <div class="actions">
+            <ion-button size="small" fill="outline" (click)="openConversation(order)">
+              Message customer
+              @if (unreadCounts[order.id]) {
+                <ion-badge color="danger">{{ unreadCounts[order.id] }}</ion-badge>
+              }
+            </ion-button>
+            @if (order.status === 'pending') {
+              <ion-button size="small" (click)="updateStatus(order, 'accepted')">Accept</ion-button>
+              <ion-button size="small" color="danger" fill="outline" (click)="updateStatus(order, 'rejected')">Reject</ion-button>
+            }
+            @if (order.status === 'accepted') { <ion-button size="small" (click)="updateStatus(order, 'processing')">Processing</ion-button> }
+            @if (order.status === 'processing') {
+              <ion-button size="small" (click)="updateStatus(order, order.fulfillmentMethod === 'pickup' ? 'readyForPickup' : 'forDelivery')">Ready</ion-button>
+            }
+            @if (order.status === 'readyForPickup' || order.status === 'forDelivery') {
+              <ion-button size="small" (click)="updateStatus(order, 'completed')">Complete</ion-button>
+            }
+          </div>
+          @if (selectedOrder?.id === order.id) {
+            <app-order-conversation [order]="order"></app-order-conversation>
+          }
+        </ion-card-content>
+      </ion-card>
+    } @empty { <p>No incoming orders.</p> }
+  </section>
+</ion-content>

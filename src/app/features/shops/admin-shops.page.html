@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Shop applications</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="shop-content">
+  @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+  <section class="shop-list">
+    @for (shop of shops; track shop.id) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ shop.name }}</ion-card-title>
+          <ion-card-subtitle>{{ shop.status | titlecase }} · {{ shop.ownerName }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ shop.description }}</p>
+          <p>{{ shop.address }} · {{ shop.serviceArea }}</p>
+          <p>{{ shop.contactNumber }}</p>
+          <div class="actions">
+            <ion-button size="small" color="success" [disabled]="updatingShopId === shop.id" (click)="updateStatus(shop, 'approved')">Approve</ion-button>
+            <ion-button size="small" color="danger" fill="outline" [disabled]="updatingShopId === shop.id" (click)="updateStatus(shop, 'rejected')">Reject</ion-button>
+            <ion-button size="small" color="warning" fill="outline" [disabled]="updatingShopId === shop.id" (click)="updateStatus(shop, 'suspended')">Suspend</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    } @empty {
+      <p>No shop applications found.</p>
+    }
+  </section>
+</ion-content>
