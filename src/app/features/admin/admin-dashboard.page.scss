@@ -1,0 +1,21 @@
+.admin-content {
+  --background: var(--ion-color-light);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.stat-grid ion-card {
+  margin: 0;
+}
+
+.message.error {
+  color: var(--ion-color-danger);
+  padding: 16px;
+}

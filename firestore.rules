@@ -19,11 +19,18 @@ service cloud.firestore {
         && request.resource.data.status == 'active';
       allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
       allow update: if signedIn()
-        && request.auth.uid == userId
-        && request.resource.data.uid == resource.data.uid
-        && request.resource.data.email == resource.data.email
-        && request.resource.data.role == resource.data.role
-        && request.resource.data.status == resource.data.status;
+        && (
+          (request.auth.uid == userId
+            && request.resource.data.uid == resource.data.uid
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.status == resource.data.status)
+          || (isAdmin()
+            && request.resource.data.uid == resource.data.uid
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createdAt == resource.data.createdAt)
+        );
       allow delete: if isAdmin();
     }
 
@@ -86,6 +93,19 @@ service cloud.firestore {
             && request.resource.data.shopId == resource.data.shopId)
         );
       allow delete: if isAdmin();
+    }
+
+    match /orderLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && (
+          request.resource.data.actorId == request.auth.uid
+          && (
+            request.resource.data.shopOwnerId == request.auth.uid
+            || request.resource.data.customerId == request.auth.uid
+          )
+        );
+      allow update, delete: if false;
     }
   }
 }

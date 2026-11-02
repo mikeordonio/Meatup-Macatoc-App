@@ -10,6 +10,9 @@ import { ShopDirectoryPage } from '../features/shops/shop-directory.page';
 import { OwnerProductsPage } from '../features/products/owner-products.page';
 import { OrdersPage } from '../features/orders/orders.page';
 import { ProfilePage } from '../features/profile/profile.page';
+import { AdminDashboardPage } from '../features/admin/admin-dashboard.page';
+import { AdminUsersPage } from '../features/admin/admin-users.page';
+import { AdminOrderLogsPage } from '../features/admin/admin-order-logs.page';
 
 const customerRoles: UserRole[] = ['customer'];
 const shopOwnerRoles: UserRole[] = ['shopOwner'];
@@ -49,7 +52,7 @@ const routes: Routes = [
       },
       {
         path: 'admin-dashboard',
-        component: RoleFeaturePage,
+        component: AdminDashboardPage,
         canActivate: [authGuard],
         data: { roles: adminRoles, title: 'Dashboard', description: 'Review platform activity and administrative tasks.', icon: 'grid-outline' }
       },
@@ -61,7 +64,7 @@ const routes: Routes = [
       },
       {
         path: 'users',
-        component: RoleFeaturePage,
+        component: AdminUsersPage,
         canActivate: [authGuard],
         data: { roles: adminRoles, title: 'Users', description: 'Monitor registered accounts and account statuses.', icon: 'people-outline' }
       },
@@ -73,7 +76,7 @@ const routes: Routes = [
       },
       {
         path: 'order-logs',
-        component: RoleFeaturePage,
+        component: AdminOrderLogsPage,
         canActivate: [authGuard],
         data: { roles: adminRoles, title: 'Order Logs', description: 'Review platform-wide order activity and status history.', icon: 'list-outline' }
       },

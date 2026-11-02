@@ -1,0 +1,19 @@
+.admin-content {
+  --background: var(--ion-color-light);
+}
+
+.filters,
+.log-list {
+  max-width: 850px;
+  margin: 16px auto;
+  padding: 0 16px;
+}
+
+.filters ion-select {
+  margin: 8px 0 16px;
+}
+
+.message.error {
+  color: var(--ion-color-danger);
+  padding: 16px;
+}

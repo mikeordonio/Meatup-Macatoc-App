@@ -18,6 +18,13 @@ export interface OrderItem {
   subtotal: number;
 }
 
+export interface OrderStatusHistoryEntry {
+  status: OrderStatus;
+  changedAt: string;
+  actorId: string;
+  actorName: string;
+}
+
 export interface Order {
   id: string;
   customerId: string;
@@ -32,4 +39,5 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
+  statusHistory?: OrderStatusHistoryEntry[];
 }

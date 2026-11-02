@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>User monitoring</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="admin-content">
+  @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+  <section class="user-list">
+    @for (user of users; track user.uid) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ user.name }}</ion-card-title>
+          <ion-card-subtitle>{{ user.email }} · {{ user.role }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-chip [color]="user.status === 'active' ? 'success' : 'danger'">{{ user.status | titlecase }}</ion-chip>
+          @if (user.status === 'active' && user.role !== 'admin') {
+            <ion-button size="small" color="danger" fill="outline" [disabled]="updatingUserId === user.uid" (click)="updateStatus(user, 'suspended')">Suspend</ion-button>
+          } @else if (user.status === 'suspended') {
+            <ion-button size="small" color="success" fill="outline" [disabled]="updatingUserId === user.uid" (click)="updateStatus(user, 'active')">Reactivate</ion-button>
+          }
+        </ion-card-content>
+      </ion-card>
+    } @empty {
+      <p>No registered users found.</p>
+    }
+  </section>
+</ion-content>

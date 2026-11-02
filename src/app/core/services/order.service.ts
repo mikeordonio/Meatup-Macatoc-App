@@ -6,7 +6,6 @@ import {
   orderBy,
   query,
   runTransaction,
-  updateDoc,
   where,
 } from 'firebase/firestore';
 
@@ -80,9 +79,51 @@ export class OrderService {
     if (!profile || profile.role !== 'shopOwner') {
       throw new Error('Only shop owners can update order status.');
     }
-    await updateDoc(doc(firestore, 'orders', orderId), {
-      status,
-      updatedAt: new Date().toISOString(),
+    await runTransaction(firestore, async (transaction) => {
+      const orderReference = doc(firestore, 'orders', orderId);
+      const snapshot = await transaction.get(orderReference);
+      if (!snapshot.exists()) {
+        throw new Error('Order was not found.');
+      }
+      const order = snapshot.data() as Order;
+      if (order.shopOwnerId !== profile.uid) {
+        throw new Error('You can only update orders for your shop.');
+      }
+      if (order.status === status) {
+        return;
+      }
+      const changedAt = new Date().toISOString();
+      const history = order.statusHistory ?? [{
+        status: order.status,
+        changedAt: order.updatedAt,
+        actorId: order.shopOwnerId,
+        actorName: profile.name,
+      }];
+      transaction.update(orderReference, {
+        status,
+        updatedAt: changedAt,
+        statusHistory: [...history, {
+          status,
+          changedAt,
+          actorId: profile.uid,
+          actorName: profile.name,
+        }],
+      });
+      const logReference = doc(collection(firestore, 'orderLogs'));
+      transaction.set(logReference, {
+        orderId,
+        customerId: order.customerId,
+        customerName: order.customerName,
+        shopId: order.shopId,
+        shopName: order.shopName,
+        shopOwnerId: order.shopOwnerId,
+        previousStatus: order.status,
+        newStatus: status,
+        changedAt,
+        actorId: profile.uid,
+        actorName: profile.name,
+        description: `Order status changed from ${order.status} to ${status}.`,
+      });
     });
   }
 
@@ -117,9 +158,37 @@ export class OrderService {
           updatedAt: new Date().toISOString(),
         });
       });
+      const changedAt = new Date().toISOString();
+      const history = order.statusHistory ?? [{
+        status: order.status,
+        changedAt: order.updatedAt,
+        actorId: order.customerId,
+        actorName: order.customerName,
+      }];
       transaction.update(orderReference, {
         status: 'cancelled',
-        updatedAt: new Date().toISOString(),
+        updatedAt: changedAt,
+        statusHistory: [...history, {
+          status: 'cancelled',
+          changedAt,
+          actorId: profile.uid,
+          actorName: profile.name,
+        }],
+      });
+      const logReference = doc(collection(firestore, 'orderLogs'));
+      transaction.set(logReference, {
+        orderId,
+        customerId: order.customerId,
+        customerName: order.customerName,
+        shopId: order.shopId,
+        shopName: order.shopName,
+        shopOwnerId: order.shopOwnerId,
+        previousStatus: order.status,
+        newStatus: 'cancelled',
+        changedAt,
+        actorId: profile.uid,
+        actorName: profile.name,
+        description: `Order cancelled from ${order.status}.`,
       });
     });
   }

@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Admin dashboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="admin-content">
+  @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+  @if (statistics; as stats) {
+    <section class="stat-grid">
+      <ion-card><ion-card-header><ion-card-subtitle>Total users</ion-card-subtitle><ion-card-title>{{ stats.totalUsers }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Active users</ion-card-subtitle><ion-card-title>{{ stats.activeUsers }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Shops</ion-card-subtitle><ion-card-title>{{ stats.totalShops }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Pending shops</ion-card-subtitle><ion-card-title>{{ stats.pendingShops }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Total orders</ion-card-subtitle><ion-card-title>{{ stats.totalOrders }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Pending orders</ion-card-subtitle><ion-card-title>{{ stats.pendingOrders }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Completed orders</ion-card-subtitle><ion-card-title>{{ stats.completedOrders }}</ion-card-title></ion-card-header></ion-card>
+      <ion-card><ion-card-header><ion-card-subtitle>Recorded revenue</ion-card-subtitle><ion-card-title>₱{{ stats.totalRevenue | number:'1.2-2' }}</ion-card-title></ion-card-header></ion-card>
+    </section>
+    <ion-card>
+      <ion-card-content>
+        Customers: {{ stats.customers }} · Shop owners: {{ stats.shopOwners }} · Suspended accounts: {{ stats.suspendedUsers }}
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

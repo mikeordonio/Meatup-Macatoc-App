@@ -18,6 +18,9 @@ import { OwnerOrdersPage } from '../features/orders/owner-orders.page';
 import { OrdersPage } from '../features/orders/orders.page';
 import { OrderConversationComponent } from '../features/orders/order-conversation.component';
 import { ProfilePage } from '../features/profile/profile.page';
+import { AdminDashboardPage } from '../features/admin/admin-dashboard.page';
+import { AdminUsersPage } from '../features/admin/admin-users.page';
+import { AdminOrderLogsPage } from '../features/admin/admin-order-logs.page';
 
 @NgModule({
   imports: [
@@ -40,6 +43,9 @@ import { ProfilePage } from '../features/profile/profile.page';
     OrdersPage,
     OrderConversationComponent,
     ProfilePage,
+    AdminDashboardPage,
+    AdminUsersPage,
+    AdminOrderLogsPage,
   ]
 })
 export class TabsPageModule {}

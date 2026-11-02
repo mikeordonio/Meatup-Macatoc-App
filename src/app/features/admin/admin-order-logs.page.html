@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Order logs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="admin-content">
+  <section class="filters">
+    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="applyFilters()" placeholder="Search order, customer, or shop"></ion-searchbar>
+    <ion-select [(ngModel)]="statusFilter" (ionChange)="applyFilters()" label="Status" labelPlacement="stacked">
+      <ion-select-option value="all">All statuses</ion-select-option>
+      <ion-select-option value="pending">Pending</ion-select-option>
+      <ion-select-option value="accepted">Accepted</ion-select-option>
+      <ion-select-option value="processing">Processing</ion-select-option>
+      <ion-select-option value="readyForPickup">Ready for pickup</ion-select-option>
+      <ion-select-option value="forDelivery">For delivery</ion-select-option>
+      <ion-select-option value="completed">Completed</ion-select-option>
+      <ion-select-option value="rejected">Rejected</ion-select-option>
+      <ion-select-option value="cancelled">Cancelled</ion-select-option>
+    </ion-select>
+  </section>
+  @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+  <section class="log-list">
+    @for (log of filteredLogs; track log.orderId + log.changedAt) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Order {{ log.orderId }}</ion-card-title>
+          <ion-card-subtitle>{{ log.customerName }} · {{ log.shopName }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p><strong>{{ log.status | titlecase }}</strong> · {{ log.changedAt | date:'medium' }}</p>
+          <p>Recorded actor: {{ log.actorName }}</p>
+        </ion-card-content>
+      </ion-card>
+    } @empty {
+      <p>No matching order activity found.</p>
+    }
+  </section>
+</ion-content>
