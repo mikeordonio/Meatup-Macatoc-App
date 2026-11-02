@@ -21,6 +21,7 @@ import { ProfilePage } from '../features/profile/profile.page';
 import { AdminDashboardPage } from '../features/admin/admin-dashboard.page';
 import { AdminUsersPage } from '../features/admin/admin-users.page';
 import { AdminOrderLogsPage } from '../features/admin/admin-order-logs.page';
+import { NotificationsPage } from '../features/notifications/notifications.page';
 
 @NgModule({
   imports: [
@@ -46,6 +47,7 @@ import { AdminOrderLogsPage } from '../features/admin/admin-order-logs.page';
     AdminDashboardPage,
     AdminUsersPage,
     AdminOrderLogsPage,
+    NotificationsPage,
   ]
 })
 export class TabsPageModule {}

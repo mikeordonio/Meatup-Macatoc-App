@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Notifications</ion-title>
+    @if (unreadCount > 0) {
+      <ion-badge slot="end" color="danger">{{ unreadCount }}</ion-badge>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="notifications-content">
+  @if (errorMessage) { <p class="message error">{{ errorMessage }}</p> }
+  <section class="notification-list">
+    @for (notification of notifications; track notification.id) {
+      <ion-card [class.unread]="!notification.readAt" (click)="markRead(notification)">
+        <ion-card-header>
+          <ion-card-subtitle>{{ notification.createdAt | date:'medium' }}</ion-card-subtitle>
+          <ion-card-title>{{ notification.title }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>{{ notification.message }}</ion-card-content>
+      </ion-card>
+    } @empty {
+      <p>No notifications yet.</p>
+    }
+  </section>
+</ion-content>

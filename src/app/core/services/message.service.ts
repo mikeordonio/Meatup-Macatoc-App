@@ -13,6 +13,7 @@ import { OrderMessage } from '../models/message.model';
 import { Order } from '../models/order.model';
 import { AuthService } from './auth.service';
 import { realtimeDatabase } from './firebase';
+import { NotificationService } from './notification.service';
 
 interface ConversationData {
   customerId: string;
@@ -23,6 +24,7 @@ interface ConversationData {
 @Injectable({ providedIn: 'root' })
 export class MessageService {
   private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
 
   getMessages(order: Order): Observable<OrderMessage[]> {
     this.assertParticipant(order);
@@ -82,6 +84,14 @@ export class MessageService {
       senderName: profile.name,
       content: trimmedContent,
       createdAt: Date.now(),
+    });
+    await this.notificationService.create({
+      recipientId: profile.uid === order.customerId ? order.shopOwnerId : order.customerId,
+      type: 'message',
+      title: 'New order message',
+      message: `${profile.name} sent a message about order ${order.id}.`,
+      orderId: order.id,
+      shopId: order.shopId,
     });
   }
 

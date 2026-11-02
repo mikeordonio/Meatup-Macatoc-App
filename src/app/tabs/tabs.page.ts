@@ -29,6 +29,7 @@ export class TabsPage {
           { label: 'Products', path: 'products', icon: 'cube-outline', roles: ['shopOwner'] },
           { label: 'Orders', path: 'orders', icon: 'receipt-outline', roles: ['shopOwner'] },
           { label: 'Profile', path: 'profile', icon: 'person-outline', roles: ['shopOwner'] },
+          { label: 'Notifications', path: 'notifications', icon: 'notifications-outline', roles: ['shopOwner'] },
         ];
       case 'admin':
         return [
@@ -37,6 +38,7 @@ export class TabsPage {
           { label: 'Shops', path: 'admin-shops', icon: 'business-outline', roles: ['admin'] },
           { label: 'Order Logs', path: 'order-logs', icon: 'list-outline', roles: ['admin'] },
           { label: 'Profile', path: 'profile', icon: 'person-outline', roles: ['admin'] },
+          { label: 'Notifications', path: 'notifications', icon: 'notifications-outline', roles: ['admin'] },
         ];
       default:
         return [
@@ -44,6 +46,7 @@ export class TabsPage {
           { label: 'Shops', path: 'shops', icon: 'storefront-outline', roles: ['customer'] },
           { label: 'Orders', path: 'orders', icon: 'receipt-outline', roles: ['customer'] },
           { label: 'Profile', path: 'profile', icon: 'person-outline', roles: ['customer'] },
+          { label: 'Notifications', path: 'notifications', icon: 'notifications-outline', roles: ['customer'] },
         ];
     }
   }

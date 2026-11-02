@@ -13,6 +13,7 @@ import { ProfilePage } from '../features/profile/profile.page';
 import { AdminDashboardPage } from '../features/admin/admin-dashboard.page';
 import { AdminUsersPage } from '../features/admin/admin-users.page';
 import { AdminOrderLogsPage } from '../features/admin/admin-order-logs.page';
+import { NotificationsPage } from '../features/notifications/notifications.page';
 
 const customerRoles: UserRole[] = ['customer'];
 const shopOwnerRoles: UserRole[] = ['shopOwner'];
@@ -85,6 +86,12 @@ const routes: Routes = [
         component: ProfilePage,
         canActivate: [authGuard],
         data: { roles: allRoles, title: 'Profile', description: 'View your account information and role.', icon: 'person-outline' }
+      },
+      {
+        path: 'notifications',
+        component: NotificationsPage,
+        canActivate: [authGuard],
+        data: { roles: allRoles, title: 'Notifications', description: 'View important account and order updates.', icon: 'notifications-outline' }
       },
       {
         path: '',

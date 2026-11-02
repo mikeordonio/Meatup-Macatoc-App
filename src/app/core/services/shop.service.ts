@@ -12,10 +12,12 @@ import {
 import { Shop, ShopInput, ShopStatus } from '../models/shop.model';
 import { firestore } from './firebase';
 import { AuthService } from './auth.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class ShopService {
   private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
 
   async createShop(input: ShopInput): Promise<Shop> {
     const profile = this.authService.currentProfile;
@@ -85,5 +87,15 @@ export class ShopService {
       status,
       updatedAt: new Date().toISOString(),
     });
+    const shop = (await this.getAllShops()).find((item) => item.id === shopId);
+    if (shop) {
+      await this.notificationService.create({
+        recipientId: shop.ownerId,
+        type: 'shopDecision',
+        title: 'Shop application updated',
+        message: `Your shop application is now ${status}.`,
+        shopId,
+      });
+    }
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -14,11 +15,13 @@ import { Order, OrderStatus } from '../models/order.model';
 import { AuthService } from './auth.service';
 import { CartService } from './cart.service';
 import { firestore } from './firebase';
+import { NotificationService } from './notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
   private readonly authService = inject(AuthService);
   private readonly cartService = inject(CartService);
+  private readonly notificationService = inject(NotificationService);
 
   async checkout(
     fulfillmentMethod: Order['fulfillmentMethod'],
@@ -36,13 +39,36 @@ export class OrderService {
     const grouped = this.groupByShop(items);
     const orders: Order[] = [];
     for (const shopItems of grouped.values()) {
-      orders.push(await this.createTransactionalOrder(
+      const order = await this.createTransactionalOrder(
         profile.uid,
         profile.name,
         shopItems,
         fulfillmentMethod,
         fulfillmentDetails.trim(),
-      ));
+      );
+      orders.push(order);
+      await this.notificationService.create({
+        recipientId: order.shopOwnerId,
+        type: 'newOrder',
+        title: 'New order received',
+        message: `${profile.name} placed a ₱${order.total.toFixed(2)} order.`,
+        orderId: order.id,
+        shopId: order.shopId,
+      });
+      for (const item of order.items) {
+        const productSnapshot = await getDoc(doc(firestore, 'products', item.productId));
+        if (productSnapshot.exists() && Number(productSnapshot.data()['availableQuantityKg']) === 0) {
+          await this.notificationService.create({
+            recipientId: order.shopOwnerId,
+            type: 'lowStock',
+            title: 'Product is out of stock',
+            message: `${item.name} has reached zero stock.`,
+            orderId: order.id,
+            shopId: order.shopId,
+            productId: item.productId,
+          });
+        }
+      }
     }
     this.cartService.clear();
     return orders;
@@ -79,6 +105,8 @@ export class OrderService {
     if (!profile || profile.role !== 'shopOwner') {
       throw new Error('Only shop owners can update order status.');
     }
+    let recipientId = '';
+    let shopId = '';
     await runTransaction(firestore, async (transaction) => {
       const orderReference = doc(firestore, 'orders', orderId);
       const snapshot = await transaction.get(orderReference);
@@ -86,6 +114,8 @@ export class OrderService {
         throw new Error('Order was not found.');
       }
       const order = snapshot.data() as Order;
+      recipientId = order.customerId;
+      shopId = order.shopId;
       if (order.shopOwnerId !== profile.uid) {
         throw new Error('You can only update orders for your shop.');
       }
@@ -125,6 +155,14 @@ export class OrderService {
         description: `Order status changed from ${order.status} to ${status}.`,
       });
     });
+    await this.notificationService.create({
+      recipientId,
+      type: 'orderStatus',
+      title: 'Order status updated',
+      message: `Your order is now ${status}.`,
+      orderId,
+      shopId,
+    });
   }
 
   async cancelOrder(orderId: string): Promise<void> {
@@ -132,6 +170,8 @@ export class OrderService {
     if (!profile || profile.role !== 'customer') {
       throw new Error('Only customers can cancel orders.');
     }
+    let recipientId = '';
+    let shopId = '';
     await runTransaction(firestore, async (transaction) => {
       const orderReference = doc(firestore, 'orders', orderId);
       const orderSnapshot = await transaction.get(orderReference);
@@ -139,6 +179,8 @@ export class OrderService {
         throw new Error('Order was not found.');
       }
       const order = orderSnapshot.data() as Order;
+      recipientId = order.shopOwnerId;
+      shopId = order.shopId;
       if (order.customerId !== profile.uid || order.status !== 'pending') {
         throw new Error('Only pending orders can be cancelled.');
       }
@@ -190,6 +232,14 @@ export class OrderService {
         actorName: profile.name,
         description: `Order cancelled from ${order.status}.`,
       });
+    });
+    await this.notificationService.create({
+      recipientId,
+      type: 'orderStatus',
+      title: 'Order cancelled',
+      message: 'A customer cancelled a pending order.',
+      orderId,
+      shopId,
     });
   }
 

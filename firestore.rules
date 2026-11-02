@@ -107,5 +107,29 @@ service cloud.firestore {
         );
       allow update, delete: if false;
     }
+
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && resource.data.recipientId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.recipientId == request.auth.uid
+        && request.resource.data.recipientId == resource.data.recipientId
+        && request.resource.data.senderId == resource.data.senderId
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow create: if signedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.recipientId != request.auth.uid
+        && (
+          (request.resource.data.orderId != null
+            && get(/databases/$(database)/documents/orders/$(request.resource.data.orderId)).data.customerId == request.auth.uid
+            && get(/databases/$(database)/documents/orders/$(request.resource.data.orderId)).data.shopOwnerId == request.resource.data.recipientId)
+          || (request.resource.data.orderId != null
+            && get(/databases/$(database)/documents/orders/$(request.resource.data.orderId)).data.shopOwnerId == request.auth.uid
+            && get(/databases/$(database)/documents/orders/$(request.resource.data.orderId)).data.customerId == request.resource.data.recipientId)
+          || (request.resource.data.shopId != null
+            && isAdmin()
+            && get(/databases/$(database)/documents/shops/$(request.resource.data.shopId)).data.ownerId == request.resource.data.recipientId)
+        );
+      allow delete: if false;
+    }
   }
 }
